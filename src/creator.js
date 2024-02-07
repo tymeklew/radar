@@ -8,7 +8,7 @@ class Creator {
     this.svg.setAttribute("height", height);
 
     // Radius of the label points in the graph
-    this.point_radius = 3;
+    this.point_radius = 2;
     // Size of the text element in the graph
     this.label_size = 5;
     this.width = width;
@@ -17,7 +17,7 @@ class Creator {
     // Array of labels for the graph
     // E.G ["Geography", "Physics"]
     this.labels = [];
-    /// Array of data points
+    /// Array of data points must match the length of the labels
     // E.G [[5 , 10] , [7 , 9]]
     this.data = [];
   }
@@ -36,29 +36,27 @@ class Creator {
 
   // Function to render the svg to the class but not to the DOM
   render() {
-    // Maximum widht of the svg is 2 times the maximum value
+    // Dont render if there is no data
     if (this.data.length == 0 || this.labels.length == 0) {
+      this.svg.innerHTML = "";
       return;
     }
 
-    let max = this.width / 2 - this.point_radius * 4;
+    // Position of the origin of which all the points are based
+    let originPos = this.width / 2 - this.point_radius * 4;
     // Angle gap between each point theta in rad
     let angle = (2 * Math.PI) / this.labels.length;
-    // This gives the x and y coordinates of the origin by adding the radius of the max possible of 2 circles and
-    // the maxmimum value so it will ajust to the max value of the points
-    let offset = max + this.point_radius * 4;
 
     // Add each of the labels onto the svg
-    this.labels.forEach((label, index) => {
+    this.labels.forEach((_, index) => {
       let point = document.createElementNS(ns, "circle");
       point.setAttribute("r", this.point_radius);
 
       // Calculate the x and y coords of the point
-      let x = this.width / 2 + max * Math.cos(angle * index - Math.PI / 2);
+      let x =
+        this.width / 2 + originPos * Math.cos(angle * index - Math.PI / 2);
       let y =
-        this.height / 2 +
-        max * Math.sin(angle * index - Math.PI / 2) -
-        this.point_radius;
+        this.width / 2 + originPos * Math.sin(angle * index - Math.PI / 2);
 
       point.setAttribute("cx", x);
       point.setAttribute("cy", y);
@@ -80,19 +78,46 @@ class Creator {
     let grouping = document.createElementNS(ns, "g");
 
     let angle = (2 * Math.PI) / this.labels.length;
+    // Position of the origin of which all the points are based
+    let originPos = this.width / 2 - this.point_radius * 4;
 
-    for (let i = 0; i < 5; i++) {
-      let dim = i * 20;
+    // Render the vertical lines directly to the labels
+    this.labels.forEach((_, index) => {
+      const line = document.createElementNS(ns, "line");
+
+      line.setAttribute("stroke", "black");
+      line.setAttribute("stroke-width", 1);
+      line.setAttribute("opacity", 0.3);
+
+      line.setAttribute("x1", this.width / 2);
+      line.setAttribute("y1", this.width / 2);
+      line.setAttribute(
+        "x2",
+        this.width / 2 + originPos * Math.cos(angle * index - Math.PI / 2),
+      );
+      line.setAttribute(
+        "y2",
+        this.width / 2 + originPos * Math.sin(angle * index - Math.PI / 2),
+      );
+
+      grouping.appendChild(line);
+    });
+
+    // Render the horizontal scale lines
+    for (let i = 0; i < 10; i++) {
+      let scale = (originPos * (i + 1)) / 10;
       const polygon = document.createElementNS(ns, "polygon");
+
       polygon.setAttribute("fill", "none");
       polygon.setAttribute("stroke", "black");
       polygon.setAttribute("stroke-width", 1);
-      polygon.setAttribute("opacity", 0.6);
+      polygon.setAttribute("opacity", 0.3);
+
       let points = "";
 
       for (let i = 0; i < this.labels.length; i++) {
-        let x = this.width / 2 + dim * Math.cos(angle * i - Math.PI / 2);
-        let y = this.width / 2 + dim * Math.sin(angle * i - Math.PI / 2);
+        let x = this.width / 2 + scale * Math.cos(angle * i - Math.PI / 2);
+        let y = this.width / 2 + scale * Math.sin(angle * i - Math.PI / 2);
 
         points += `${x},${y} `;
       }
@@ -106,10 +131,11 @@ class Creator {
 
   // Render the polygon onto the graph for the data points
   polygon(data) {
-    console.log("Data", data);
     let polygon = document.createElementNS(ns, "polygon");
+
     polygon.setAttribute("fill", "none");
-    polygon.setAttribute("stroke", "black");
+    polygon.setAttribute("stroke", "#ff0000");
+
     let angle = (2 * Math.PI) / this.labels.length;
 
     let points = "";
@@ -118,6 +144,7 @@ class Creator {
       let y = this.width / 2 + data[i] * 8 * Math.sin(angle * i - Math.PI / 2);
       points += `${x},${y} `;
     }
+
     polygon.setAttribute("points", points);
 
     return polygon;
@@ -128,6 +155,7 @@ class Creator {
     text.setAttribute("x", x);
     text.setAttribute("y", y);
     text.setAttribute("font-size", this.label_size);
+
     text.textContent = label;
     return text;
   }
