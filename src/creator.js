@@ -15,6 +15,7 @@ class Creator {
     this.width = width;
     this.height = height;
     this.maxValue = 0;
+    this.targetElement = null;
 
     // Array of labels for the graph
     // E.G ["Geography", "Physics"]
@@ -22,6 +23,11 @@ class Creator {
     /// Array of data points must match the length of the labels
     // E.G [[5 , 10] , [7 , 9]]
     this.data = [];
+  }
+
+  // Sets the target element to render the graph to
+  setTargetElement(element) {
+    this.targetElement = element;
   }
 
   // Retunrs origional position of the graph
@@ -59,11 +65,10 @@ class Creator {
     this.maxValue = Math.max(...this.data.map((data) => Math.max(...data)));
   }
 
-  // Function to render the svg to the class but not to the DOM
   render() {
+    this.svg.innerHTML = "";
     // Dont render if there is no data
     if (this.data.length == 0 || this.labels.length == 0) {
-      this.svg.innerHTML = "";
       return;
     }
 
@@ -101,7 +106,8 @@ class Creator {
 
     this.svg.appendChild(this.renderScale());
 
-    document.documentElement.innerHTML = this.ToString();
+    console.log(this.targetElement);
+    this.targetElement.innerHTML = this.svg.outerHTML;
   }
 
   // Render a scale onto the graph
@@ -136,8 +142,6 @@ class Creator {
 
     // Render the polygons onto the graph for the data points scaling
     for (let i = 0; i < 11; i++) {
-      const scale = (i / 10) * this.width;
-
       const polygon = document.createElementNS(ns, "polygon");
       polygon.setAttribute("stroke", "#000000");
       polygon.setAttribute("opacity", 0.4);
@@ -167,8 +171,8 @@ class Creator {
   renderPolygon(data) {
     let polygon = document.createElementNS(ns, "polygon");
 
-    polygon.setAttribute("fill", "#fff000");
-    polygon.setAttribute("fill-opacity", 0.3);
+    polygon.setAttribute("fill", "#ff0000");
+    polygon.setAttribute("fill-opacity", 0.2);
     polygon.setAttribute("stroke", "#ff0000");
 
     const angle = (2 * Math.PI) / this.labels.length;
