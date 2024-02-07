@@ -8,11 +8,13 @@ class Creator {
     this.svg.setAttribute("width", width);
     this.svg.setAttribute("height", height);
 
+    // Radius of the label points in the graph
+    this.point_radius = 2;
     // Size of the text element in the graph
     this.label_size = 5;
     this.width = width;
     this.height = height;
-    // Where the creator will render the graph on the DOM
+    this.maxValue = 0;
     this.targetElement = null;
 
     // Array of labels for the graph
@@ -79,6 +81,7 @@ class Creator {
     // Add each of the labels onto the svg
     this.labels.forEach((text, index) => {
       let label = document.createElementNS(ns, "text");
+      label.setAttribute("r", this.point_radius);
 
       const x =
         origin.x +
@@ -103,6 +106,7 @@ class Creator {
 
     this.svg.appendChild(this.renderScale());
 
+    console.log(this.targetElement);
     this.targetElement.innerHTML = this.svg.outerHTML;
   }
 
@@ -171,7 +175,7 @@ class Creator {
     polygon.setAttribute("fill-opacity", 0.2);
     polygon.setAttribute("stroke", "#ff0000");
 
-    const angle = COMPLETE_ANGLE / this.labels.length;
+    const angle = (2 * Math.PI) / this.labels.length;
     const origin = this.originPos();
     const dimensions = this.dimensions();
 
@@ -180,13 +184,13 @@ class Creator {
       const x =
         origin.x +
         (data[i] / this.maxValue) *
-          dimensions.width *
-          Math.cos(angle * i - COMPLETE_ANGLE / 4);
+        dimensions.width *
+        Math.cos(angle * i - COMPLETE_ANGLE / 4);
       const y =
         origin.y +
         (data[i] / this.maxValue) *
-          dimensions.height *
-          Math.sin(angle * i - COMPLETE_ANGLE / 4);
+        dimensions.height *
+        Math.sin(angle * i - COMPLETE_ANGLE / 4);
 
       points += `${x},${y} `;
     }

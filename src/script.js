@@ -5,8 +5,8 @@ var creator = new Creator(800, 800);
 creator.setTargetElement(graphElement);
 
 var state = {
-  labels: ["English", "Physics", "Biology", "Chemistry"],
-  variants: [[1, 2, 3, 4]],
+  labels: ["English", "Physics", "Biology", "Chemistry", "Geology"],
+  variants: [[1, 2, 3, 4, 5]],
 };
 
 function renderVariants() {
@@ -44,7 +44,6 @@ function updateGraph() {
 }
 
 window.onload = () => {
-  console.log("Hello World");
   console.log(creator);
   renderVariants();
   updateGraph();
