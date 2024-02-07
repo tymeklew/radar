@@ -14,7 +14,6 @@ class Creator {
     this.label_size = 5;
     this.width = width;
     this.height = height;
-    this.maxValue = 0;
     this.targetElement = null;
 
     // Array of labels for the graph
@@ -106,7 +105,6 @@ class Creator {
 
     this.svg.appendChild(this.renderScale());
 
-    console.log(this.targetElement);
     this.targetElement.innerHTML = this.svg.outerHTML;
   }
 
