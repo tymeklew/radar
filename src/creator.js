@@ -148,7 +148,7 @@ class Creator {
 			let points = "";
 
 			this.labels.forEach((_, index) => {
-				let scale = (i / (this.labelLines));
+				let scale = i / this.labelLines;
 
 				let width = scale * dimensions.width;
 				let height = scale * dimensions.height;
@@ -193,7 +193,6 @@ class Creator {
 				dimensions.height *
 				Math.sin(angle * i - COMPLETE_ANGLE / 4);
 
-
 			let point = document.createElementNS(ns, "circle");
 			point.setAttribute("cx", x);
 			point.setAttribute("cy", y);
@@ -222,7 +221,7 @@ class Creator {
 		return text;
 	}
 
-	// Gets the download link this is what is used to download the file 
+	// Gets the download link this is what is used to download the file
 	downloadLink() {
 		let serializer = new XMLSerializer();
 		let source = serializer.serializeToString(this.svg);
@@ -234,3 +233,5 @@ class Creator {
 		return this.svg.outerHTML;
 	}
 }
+
+export default Creator;
